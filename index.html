@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스쿨버스 가르기/모으기 - 학생 사진</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f8ff; /* 하늘색 배경 */
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        /* 학생 풀 스타일 */
+        .student-pool {
+            width: 95%; /* 더 넓게 */
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px; /* 버스와 간격 */
+            background-color: #ffffff; /* 하얀색 배경 추가 */
+            border: 2px solid #a0c4ff; /* 테두리 추가 */
+            border-radius: 15px; /* 둥근 모서리 */
+            padding: 20px; /* 패딩 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 */
+            min-height: 250px; /* 최소 높이 */
+        }
+
+        .student-pool > h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .student-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: flex-start;
+            border: 2px dashed #ccc; /* 회색 점선 테두리 */
+            border-radius: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #e6f7ff; /* 연한 하늘색 배경 */
+            width: 100%;
+            overflow-y: auto;
+            min-height: 120px; /* 높이 확보 */
+        }
+
+        .student-image {
+            width: 100px; /* 학생 사진 크기 키우기 */
+            height: 100px;
+            border-radius: 50%; /* 원형으로 표시 */
+            cursor: grab; /* 드래그 가능한 커서 */
+            margin: 8px; /* 학생들 간 간격 */
+            user-select: none;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+            object-fit: cover; /* 이미지가 원형에 맞춰 잘리지 않게 */
+            transition: transform 0.1s ease; /* 드래그 시 애니메이션 */
+        }
+
+        .student-image:active {
+            transform: scale(1.05); /* 클릭 시 살짝 커지게 */
+        }
+
+        .student-image.dragging {
+            opacity: 0.7;
+            border: 3px dashed #ff4500; /* 드래그 시 주황색 점선 테두리 */
+            z-index: 20;
+        }
+
+        /* 버스 컨테이너 스타일 */
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px; /* 컨트롤 버튼과의 간격 */
+        }
+
+        .bus-area {
+            background-color: #ffffff;
+            border: 2px solid #a0c4ff; /* 연한 파랑 테두리 */
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 45%;
+            min-width: 300px;
+        }
+
+        .bus {
+            width: 500px; /* 버스 크기 유지 */
+            height: 240px;
+            background-color: #ffd700; /* 노란색 버스 */
+            border: 2px solid #e0b000;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: #555;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+            background-image: url('https://postfiles.pstatic.net/MjAyNTA2MTFfMTUx/MDAxNzQ5NjA4NTEzMDc4.HfaZ8yxe6r5kb7THTWqDSmbVDWhR7QosXIc6h33F5SYg.AXriwG_pic4qcg4A_Fv3UbXlDLm6zRDRfj6Wq0tpQDkg.PNG/image.png?type=w580'); /* 스쿨버스 이미지 (예시) */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .bus-name {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+            color: #333;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 2px 8px;
+            border-radius: 5px;
+        }
+
+        .bus-count {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 2px 8px;
+            border-radius: 5px;
+        }
+        
+        .draggable-area {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start; /* 왼쪽부터 학생들 배치 */
+            align-content: flex-start;
+            border: 2px dashed #90ee90; /* 연한 초록색 점선 테두리 (버스 내부) */
+            border-radius: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #f0fff0; /* 연한 녹색 배경 (버스 내부) */
+            margin-top: 10px;
+            overflow-y: auto;
+            min-height: 100px;
+        }
+
+        .controls {
+            margin-top: 40px; /* 버튼과 위 영역 간격 */
+            display: flex;
+            gap: 20px; /* 버튼 간 간격 */
+        }
+
+        button {
+            padding: 15px 30px; /* 버튼 크기 키우기 */
+            font-size: 1.2em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: translateY(2px); /* 클릭 시 살짝 눌리는 효과 */
+        }
+
+        button.reset {
+            background-color: #ff6347; /* 밝은 빨강 */
+            color: white;
+        }
+
+        button.reset:hover {
+            background-color: #e55337;
+        }
+
+        button.check {
+            background-color: #4CAF50; /* 초록색 */
+            color: white;
+        }
+
+        button.check:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            margin-top: 30px;
+            font-size: 1.4em; /* 메시지 크기 키우기 */
+            font-weight: bold;
+            color: #000;
+            text-align: center;
+            min-height: 30px; /* 메시지 영역 확보 */
+        }
+    </style>
+</head>
+<body>
+    <h1>스쿨버스 가르기 &amp; 모으기</h1>
+
+    <div class="student-pool" id="studentPool">
+        <h2>대기 중인 학생들</h2>
+        <div class="student-container" id="studentPoolContents"></div>
+    </div>
+
+    <div class="container">
+        <div class="bus-area" id="busArea1">
+            <div class="bus" id="bus1">
+                <span class="bus-name">버스</span>
+                <span class="bus-count" id="busCount1">0</span>
+            </div>
+            <div class="draggable-area" id="busContents1"></div>
+        </div>
+
+        <div class="bus-area" id="busArea2">
+            <div class="bus" id="bus2">
+                <span class="bus-name">버스</span>
+                <span class="bus-count" id="busCount2">0</span>
+            </div>
+            <div class="draggable-area" id="busContents2"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="reset" onclick="resetGame()">다시 시작하기</button>
+        <button class="check" onclick="checkAnswer()">정답 확인</button>
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <script>
+        const studentPoolContents = document.getElementById('studentPoolContents');
+        const busContents1 = document.getElementById('busContents1');
+        const busContents2 = document.getElementById('busContents2');
+        const busCount1 = document.getElementById('busCount1');
+        const busCount2 = document.getElementById('busCount2');
+        const messageDisplay = document.getElementById('message');
+
+        let students = [];
+        let totalStudents = 6; // 초기 학생 수 설정 (6명)
+
+        // 학생 이미지 URL 목록
+        const studentImageUrls = [
+            'https://postfiles.pstatic.net/MjAyNTA2MDlfNDgg/MDAxNzQ5NDM1NzkxODY0.-dJpFary0Yytz8NRYx-RundyNyUCGnTzAH0VS3d3rhwg.uCWmVCSN99tdX-D3coEfd-E0GG5l1U6g-LliFwcHpYUg.PNG/image01.png?type=w3840',
+            'https://postfiles.pstatic.net/MjAyNTA2MDlfMjAw/MDAxNzQ5NDM1NzkxMzYw.IDUVmr8BaeU_QMQ2QRPIo_5vyPOJ7Y2MEpS8OsOk-T4g.JxxK8FYB7CS9axzX2KDUttROkSvN29-4GWrpChD6uPsg.PNG/%EA%B9%80%EB%8F%84%ED%9B%88.png?type=w3840',
+            'https://postfiles.pstatic.net/MjAyNTA2MDlfMjk5/MDAxNzQ5NDM1NzkxNjYy.10YhH0JZi7RR1srIYtlprrGU7NZeeo7mkQ_PFcXZQK4g.do10izIKocH-OugEqayK5-CAMvFksOhwsNfx2FTpObkg.PNG/%EA%B9%80%EB%B3%B4%EA%B2%BD.png?type=w3840',
+            'https://postfiles.pstatic.net/MjAyNTA2MDlfOTIg/MDAxNzQ5NDM1NzkxMzI2.cqpo78bop0c2Hd4xbURtQ_301CON4XhJxB9H_QrnBeQg.i34vVsvTDm9SDRhL729kSZQ4KTGy7HXJ2lh4c16Tm8Eg.PNG/%EA%B9%80%EC%84%A4%EC%95%84.png?type=w3840',
+            'https://postfiles.pstatic.net/MjAyNTA2MDlfMiAg/MDAxNzQ5NDM1NzkxNDc4.HRhkhZj3oykQDBzDacKf7W5aZ3teLWJaDZIBsDdnM38g.rhwAKxGhrmVGdAQ03airhwTQ0YBAVQ_hkleuVmUifacg.PNG/%EC%9D%B4%EC%A4%80%ED%9D%AC.png?type=w3840',
+            'https://postfiles.pstatic.net/MjAyNTA2MDlfMjU5/MDAxNzQ5NDM1NzkxMzE4.id1ocfTojx-DC6jwGF19o8n2wQQHjsH2XWhVNpekTxUg.c5PQBkyTHVrtMCJa1usyvxDuAkJRply2dQy9Kq6i2QAg.PNG/%ED%99%A9%EC%84%A0%EC%9A%B0.png?type=w3840',
+
+        ];
+
+        // --- 효과음 파일 경로 설정 (이 부분을 실제 파일 경로로 변경해주세요!) ---
+        const dragSound = new Audio('https://www.soundjay.com/buttons/button-1.mp3'); // 드래그 시작 시 소리 (예시: 짧은 클릭)
+        const dropSound = new Audio('https://www.soundjay.com/buttons/button-2.mp3'); // 드롭 시 소리 (예시: 확인 소리)
+        const successSound = new Audio('https://www.soundjay.com/success/success-sound-2.mp3'); // 정답 시 소리
+        const failSound = new Audio('https://www.soundjay.com/misc/fail-buzzer-01.mp3'); // 오답 시 소리
+        // --- 효과음 파일 경로 설정 끝 ---
+
+        // 학생 생성 및 초기화 함수
+        function initializeStudents() {
+            studentPoolContents.innerHTML = '';
+            busContents1.innerHTML = '';
+            busContents2.innerHTML = '';
+            students = [];
+
+            for (let i = 0; i < totalStudents; i++) {
+                const student = document.createElement('img');
+                student.classList.add('student-image');
+                student.src = studentImageUrls[i % studentImageUrls.length];
+                student.setAttribute('draggable', true);
+                student.id = 'student-' + (i + 1);
+                students.push(student);
+                studentPoolContents.appendChild(student);
+            }
+            updateBusCounts();
+            messageDisplay.textContent = '';
+        }
+
+        // 드래그 시작 이벤트 핸들러
+        let draggedStudent = null;
+        document.addEventListener('dragstart', (e) => {
+            if (e.target.classList.contains('student-image')) {
+                draggedStudent = e.target;
+                e.target.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', e.target.id);
+                dragSound.play(); // 드래그 시작 시 효과음 재생
+            }
+        });
+
+        // 드래그 종료 이벤트 핸들러
+        document.addEventListener('dragend', (e) => {
+            if (draggedStudent) {
+                draggedStudent.classList.remove('dragging');
+                draggedStudent = null;
+            }
+        });
+
+        // 드롭 대상 위에 있을 때 이벤트 핸들러
+        document.addEventListener('dragover', (e) => {
+            if (e.target.classList.contains('draggable-area') || e.target.closest('.draggable-area')) {
+                e.preventDefault();
+            }
+        });
+
+        // 드롭 이벤트 핸들러
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+
+            const studentId = e.dataTransfer.getData('text/plain');
+            const student = document.getElementById(studentId);
+
+            let dropTarget = e.target;
+            while (dropTarget && !dropTarget.classList.contains('draggable-area')) {
+                dropTarget = dropTarget.parentElement;
+            }
+
+            if (student && dropTarget) {
+                dropTarget.appendChild(student);
+                updateBusCounts();
+                dropSound.play(); // 드롭 시 효과음 재생
+            }
+        });
+
+        // 버스별 학생 수 업데이트 함수
+        function updateBusCounts() {
+            busCount1.textContent = busContents1.children.length;
+            busCount2.textContent = busContents2.children.length;
+        }
+
+        // 게임 리셋 함수
+        function resetGame() {
+            initializeStudents();
+        }
+
+        // 정답 확인 함수 (가르기와 모으기 예시 로직)
+        function checkAnswer() {
+            const count1 = parseInt(busCount1.textContent);
+            const count2 = parseInt(busCount2.textContent);
+            const totalInBuses = count1 + count2;
+            const studentsInPool = studentPoolContents.children.length;
+            const currentTotalStudents = totalInBuses + studentsInPool;
+
+            if (currentTotalStudents !== totalStudents) {
+                messageDisplay.style.color = '#dc3545';
+                messageDisplay.textContent = `학생들이 사라졌거나 잘못되었어요! "다시 시작하기" 버튼을 눌러주세요.`;
+                failSound.play(); // 오답/오류 시 효과음 재생
+                return;
+            }
+
+            if (studentsInPool === 0 && totalInBuses === totalStudents) {
+                messageDisplay.style.color = '#28a745';
+                messageDisplay.textContent = `정말 잘했어요! ${totalStudents}명의 학생을 ${count1}명과 ${count2}명으로 멋지게 나누어 태웠어요!`;
+                successSound.play(); // 정답 시 효과음 재생
+            }
+            else if (studentsInPool === totalStudents && count1 === 0 && count2 === 0) {
+                messageDisplay.style.color = '#28a745';
+                messageDisplay.textContent = `훌륭해요! ${totalStudents}명의 학생들을 모두 다시 대기 공간으로 모았습니다!`;
+                successSound.play(); // 정답 시 효과음 재생
+            }
+            else {
+                messageDisplay.style.color = '#dc3545';
+                messageDisplay.textContent = `아직 모든 학생을 태우거나 모으지 못했어요. 다시 한번 해볼까요?`;
+                failSound.play(); // 오답 시 효과음 재생
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeStudents);
+    </script>
+</body>
+</html>
