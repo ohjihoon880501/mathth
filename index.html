@@ -123,7 +123,7 @@
             margin-bottom: 15px;
             position: relative;
             overflow: hidden;
-            background-image: url('https://postfiles.pstatic.net/MjAyNTA2MTFfMTUx/MDAxNzQ5NjA4NTEzMDc4.HfaZ8yxe6r5kb7THTWqDSmbVDWhR7QosXIc6h33F5SYg.AXriwG_pic4qcg4A_Fv3UbXlDLm6zRDRfj6Wq0tpQDkg.PNG/image.png?type=w580'); /* 스쿨버스 이미지 (예시) */
+            background-image: url('https://postfiles.pstatic.net/MjAyNTA2MTFfMTUx/MDAxNzQ5NjA4NTEzMDc4.HfaZ8yxe6r5kb7THTWqDSmbVDWhR7QosXIc6h33F5SYg.AXriwG_pic4qcg4A_Fv3UbXlDLm6zRDRfj6Wq0tpQDkg.PNG/image.png'); /* 스쿨버스 이미지 (예시) */
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -264,12 +264,12 @@
 
         // 학생 이미지 URL 목록
         const studentImageUrls = [
-            'https://postfiles.pstatic.net/MjAyNTA2MDlfNDgg/MDAxNzQ5NDM1NzkxODY0.-dJpFary0Yytz8NRYx-RundyNyUCGnTzAH0VS3d3rhwg.uCWmVCSN99tdX-D3coEfd-E0GG5l1U6g-LliFwcHpYUg.PNG/image01.png?type=w3840',
-            'https://postfiles.pstatic.net/MjAyNTA2MDlfMjAw/MDAxNzQ5NDM1NzkxMzYw.IDUVmr8BaeU_QMQ2QRPIo_5vyPOJ7Y2MEpS8OsOk-T4g.JxxK8FYB7CS9axzX2KDUttROkSvN29-4GWrpChD6uPsg.PNG/%EA%B9%80%EB%8F%84%ED%9B%88.png?type=w3840',
-            'https://postfiles.pstatic.net/MjAyNTA2MDlfMjk5/MDAxNzQ5NDM1NzkxNjYy.10YhH0JZi7RR1srIYtlprrGU7NZeeo7mkQ_PFcXZQK4g.do10izIKocH-OugEqayK5-CAMvFksOhwsNfx2FTpObkg.PNG/%EA%B9%80%EB%B3%B4%EA%B2%BD.png?type=w3840',
-            'https://postfiles.pstatic.net/MjAyNTA2MDlfOTIg/MDAxNzQ5NDM1NzkxMzI2.cqpo78bop0c2Hd4xbURtQ_301CON4XhJxB9H_QrnBeQg.i34vVsvTDm9SDRhL729kSZQ4KTGy7HXJ2lh4c16Tm8Eg.PNG/%EA%B9%80%EC%84%A4%EC%95%84.png?type=w3840',
-            'https://postfiles.pstatic.net/MjAyNTA2MDlfMiAg/MDAxNzQ5NDM1NzkxNDc4.HRhkhZj3oykQDBzDacKf7W5aZ3teLWJaDZIBsDdnM38g.rhwAKxGhrmVGdAQ03airhwTQ0YBAVQ_hkleuVmUifacg.PNG/%EC%9D%B4%EC%A4%80%ED%9D%AC.png?type=w3840',
-            'https://postfiles.pstatic.net/MjAyNTA2MDlfMjU5/MDAxNzQ5NDM1NzkxMzE4.id1ocfTojx-DC6jwGF19o8n2wQQHjsH2XWhVNpekTxUg.c5PQBkyTHVrtMCJa1usyvxDuAkJRply2dQy9Kq6i2QAg.PNG/%ED%99%A9%EC%84%A0%EC%9A%B0.png?type=w3840',
+            'https://postfiles.pstatic.net/MjAyNTA2MDlfNDgg/MDAxNzQ5NDM1NzkxODY0.-dJpFary0Yytz8NRYx-RundyNyUCGnTzAH0VS3d3rhwg.uCWmVCSN99tdX-D3coEfd-E0GG5l1U6g-LliFwcHpYUg.PNG/image01.png',
+            'https://postfiles.pstatic.net/MjAyNTA2MDlfMjAw/MDAxNzQ5NDM1NzkxMzYw.IDUVmr8BaeU_QMQ2QRPIo_5vyPOJ7Y2MEpS8OsOk-T4g.JxxK8FYB7CS9axzX2KDUttROkSvN29-4GWrpChD6uPsg.PNG/%EA%B9%80%EB%8F%84%ED%9B%88.png',
+            'https://postfiles.pstatic.net/MjAyNTA2MDlfMjk5/MDAxNzQ5NDM1NzkxNjYy.10YhH0JZi7RR1srIYtlprrGU7NZeeo7mkQ_PFcXZQK4g.do10izIKocH-OugEqayK5-CAMvFksOhwsNfx2FTpObkg.PNG/%EA%B9%80%EB%B3%B4%EA%B2%BD.png',
+            'https://postfiles.pstatic.net/MjAyNTA2MDlfOTIg/MDAxNzQ5NDM1NzkxMzI2.cqpo78bop0c2Hd4xbURtQ_301CON4XhJxB9H_QrnBeQg.i34vVsvTDm9SDRhL729kSZQ4KTGy7HXJ2lh4c16Tm8Eg.PNG/%EA%B9%80%EC%84%A4%EC%95%84.png',
+            'https://postfiles.pstatic.net/MjAyNTA2MDlfMiAg/MDAxNzQ5NDM1NzkxNDc4.HRhkhZj3oykQDBzDacKf7W5aZ3teLWJaDZIBsDdnM38g.rhwAKxGhrmVGdAQ03airhwTQ0YBAVQ_hkleuVmUifacg.PNG/%EC%9D%B4%EC%A4%80%ED%9D%AC.png',
+            'https://postfiles.pstatic.net/MjAyNTA2MDlfMjU5/MDAxNzQ5NDM1NzkxMzE4.id1ocfTojx-DC6jwGF19o8n2wQQHjsH2XWhVNpekTxUg.c5PQBkyTHVrtMCJa1usyvxDuAkJRply2dQy9Kq6i2QAg.PNG/%ED%99%A9%EC%84%A0%EC%9A%B0.png',
 
         ];
 
